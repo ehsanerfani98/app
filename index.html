@@ -125,8 +125,7 @@
 
 
     <!-- carousel Component -->
-    <div id="carousel-container"
-      class="carousel-container relative w-full overflow-hidden rounded-lg bg-black">
+    <div id="carousel-container" class="carousel-container relative w-full overflow-hidden rounded-lg bg-black">
 
       <!-- === ریل اسلایدها (جعبه متحرک) === -->
       <div class="carousel-track flex transition-transform duration-500 ease-in-out h-60">
@@ -152,7 +151,7 @@
         </div>
       </div>
 
-     
+
 
       <!-- === دکمه ناوبری بعدی (در سمت چپ) === -->
       <button
@@ -165,7 +164,7 @@
       </button>
 
 
-       <!-- === دکمه ناوبری قبلی (در سمت راست) === -->
+      <!-- === دکمه ناوبری قبلی (در سمت راست) === -->
       <button
         class="carousel-button prev absolute top-1/2 -translate-y-1/2 left-4 bg-white/30 hover:bg-white/50 text-white p-2 rounded-full transition-all duration-300 z-10"
         aria-label="اسلاید قبلی">
@@ -175,7 +174,7 @@
         </svg>
       </button>
 
-      
+
       <!-- === نشانگرها (نقاط پایین) === -->
       <div
         class="carousel-indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 space-x-reverse z-10">
@@ -485,7 +484,7 @@
             توضیحات مختصر برای معرفی آیتم لیست
           </p>
         </div>
-        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition">
+        <button id="show_toast_btn" class="text-blue-600 hover:text-blue-800 text-sm font-medium transition">
           مشاهده
         </button>
       </div>
@@ -569,6 +568,55 @@
       openBtn.addEventListener("click", openSheet);
       closeBtn.addEventListener("click", closeSheet);
       backdrop.addEventListener("click", closeSheet);
+    </script>
+
+
+
+    <!-- Toasts Component -->
+    <div id="toast_container" class="fixed inset-0 flex items-end justify-center pb-4 pointer-events-none z-[9999]"></div>
+    <script>
+      const toast_container = document.getElementById('toast_container');
+      const show_toast_btn = document.getElementById('show_toast_btn');
+
+      function showToast(message, type = 'success') {
+        const toast = document.createElement('div');
+        const colors = {
+          success: 'bg-green-500',
+          error: 'bg-red-500',
+          warning: 'bg-yellow-500',
+          info: 'bg-blue-500'
+        };
+
+        toast.className = `
+        toast-popup text-white px-4 py-2 rounded-xl shadow-lg
+        ${colors[type] || colors.success}
+        opacity-0 translate-y-4 transition-all duration-300
+      `;
+
+        toast.innerHTML = `
+        <div class="flex items-center gap-2"><span>${message}</span>
+        </div>
+      `;
+
+        toast_container.appendChild(toast);
+
+        // fade in
+        setTimeout(() => {
+          toast.classList.remove('opacity-0', 'translate-y-4');
+          toast.classList.add('opacity-100', 'translate-y-0');
+        }, 10);
+
+        // auto remove after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove('opacity-100', 'translate-y-0');
+          toast.classList.add('opacity-0', 'translate-y-4');
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      show_toast_btn.addEventListener('click', () => {
+        showToast('عملیات با موفقیت انجام شد', 'success');
+      });
     </script>
 
 
