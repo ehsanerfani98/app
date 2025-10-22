@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bottom Sheet Demo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      font-family: "Vazirmatn", sans-serif;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen px-2 pt-[4.25rem] pb-24">
+
+  <!-- Top Bar -->
+  <header class="fixed top-0 left-0 w-full bg-white shadow-md flex items-center justify-between px-4 h-14 z-20">
+    <!-- آیکون منو سمت راست -->
+    <button id="openMenuBtn" class="text-gray-600 hover:text-red-500 focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- عنوان صفحه -->
+    <h1 class="text-lg font-semibold text-gray-800">صفحه اصلی</h1>
+
+    <!-- آیکون اعلان سمت چپ -->
+    <button id="open_popup" class="text-gray-600 hover:text-red-500 focus:outline-none">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+    </button>
+  </header>
+
+
+  <div class="w-full max-w-4xl mx-auto">
+
+
+
+    <!-- menu Component -->
+    <div id="menuOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-50">
+      <!-- خود منو -->
+      <nav id="sideMenu"
+        class="absolute top-0 right-0 w-72 max-w-full bg-white shadow-xl h-full transform translate-x-full transition-transform duration-300 ease-out rounded-l-2xl flex flex-col">
+        <!-- هدر -->
+        <div class="flex items-center justify-between p-4 border-b">
+          <h2 class="font-semibold text-gray-700">منوی کاربر</h2>
+          <button id="closeMenuBtn" class="p-2 hover:bg-gray-100 rounded-full">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- آیتم‌های منو -->
+        <ul class="flex-1 overflow-y-auto p-4 space-y-2">
+          <li>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium">
+              🏠 صفحه اصلی
+            </a>
+          </li>
+          <li>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium">
+              📦 محصولات
+            </a>
+          </li>
+          <li>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium">
+              ❤️ علاقه‌مندی‌ها
+            </a>
+          </li>
+          <li>
+            <a href="#" class="block p-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium">
+              ⚙️ تنظیمات
+            </a>
+          </li>
+        </ul>
+
+        <!-- فوتر -->
+        <div class="border-t p-4 text-center text-sm text-gray-500">
+          © 2025 Binam Media
+        </div>
+      </nav>
+    </div>
+    <script>
+      const openMenuBtn = document.getElementById("openMenuBtn");
+      const closeMenuBtn = document.getElementById("closeMenuBtn");
+      const menuOverlay = document.getElementById("menuOverlay");
+      const sideMenu = document.getElementById("sideMenu");
+
+      function openMenu() {
+        menuOverlay.classList.remove("hidden");
+        requestAnimationFrame(() => {
+          sideMenu.classList.remove("translate-x-full");
+        });
+      }
+
+      function closeMenu() {
+        sideMenu.classList.add("translate-x-full");
+        setTimeout(() => {
+          menuOverlay.classList.add("hidden");
+        }, 300);
+      }
+
+      openMenuBtn.addEventListener("click", openMenu);
+      closeMenuBtn.addEventListener("click", closeMenu);
+      menuOverlay.addEventListener("click", (e) => {
+        if (e.target === menuOverlay) closeMenu();
+      });
+    </script>
+
+
+
+
+
+    <!-- carousel Component -->
+    <div id="carousel-container"
+      class="carousel-container relative w-full overflow-hidden rounded-lg bg-black">
+
+      <!-- === ریل اسلایدها (جعبه متحرک) === -->
+      <div class="carousel-track flex transition-transform duration-500 ease-in-out h-60">
+        <!-- اسلاید 1 -->
+        <div class="carousel-slide w-full flex-shrink-0">
+          <img src="https://takhfifan.com/media/homepage/e3b195df48368ab1b13da63b1e3a8366.jpg" alt="تصویر اسلاید ۱"
+            class="w-full h-full object-cover">
+        </div>
+        <!-- اسلاید 2 -->
+        <div class="carousel-slide w-full flex-shrink-0">
+          <img src="https://takhfifan.com/media/homepage/d2f734ccdeba5ed2e34991773575f545.jpg" alt="تصویر اسلاید ۲"
+            class="w-full h-full object-cover">
+        </div>
+        <!-- اسلاید 3 -->
+        <div class="carousel-slide w-full flex-shrink-0">
+          <img src="https://takhfifan.com/media/homepage/3edd7bba84fd9b963dc3b5b9f9118b06.jpg" alt="تصویر اسلاید ۳"
+            class="w-full h-full object-cover">
+        </div>
+        <!-- اسلاید 4 -->
+        <div class="carousel-slide w-full flex-shrink-0">
+          <img src="https://takhfifan.com/media/homepage/adf2e0187cc82af1315c9a976cd14c98.jpg" alt="تصویر اسلاید ۴"
+            class="w-full h-full object-cover">
+        </div>
+      </div>
+
+     
+
+      <!-- === دکمه ناوبری بعدی (در سمت چپ) === -->
+      <button
+        class="carousel-button next absolute top-1/2 -translate-y-1/2 right-4 bg-white/30 hover:bg-white/50 text-white p-2 rounded-full transition-all duration-300 z-10"
+        aria-label="اسلاید بعدی">
+        <!-- آیکون برای حرکت به چپ -->
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+      </button>
+
+
+       <!-- === دکمه ناوبری قبلی (در سمت راست) === -->
+      <button
+        class="carousel-button prev absolute top-1/2 -translate-y-1/2 left-4 bg-white/30 hover:bg-white/50 text-white p-2 rounded-full transition-all duration-300 z-10"
+        aria-label="اسلاید قبلی">
+        <!-- آیکون برای حرکت به راست -->
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+        </svg>
+      </button>
+
+      
+      <!-- === نشانگرها (نقاط پایین) === -->
+      <div
+        class="carousel-indicators absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 space-x-reverse z-10">
+        <!-- این نقوط به صورت داینامیک با جاوا اسکریپت ساخته می‌شوند -->
+      </div>
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+        // === ۱. گرفتن عناصر DOM ===
+        const track = document.querySelector('.carousel-track');
+        const slides = Array.from(track.children);
+        const nextButton = document.querySelector('.carousel-button.next');
+        const prevButton = document.querySelector('.carousel-button.prev');
+        const indicatorsContainer = document.querySelector('.carousel-indicators');
+        const carouselContainer = document.getElementById('carousel-container');
+
+        // === ۲. متغیرهای حالت (State) ===
+        let currentIndex = 0;
+        let startX = 0;
+        let isDragging = false;
+        let autoplayInterval; // برای نگهداری ID تایمر
+
+        // === ۳. توابع کمکی ===
+
+        /**
+         * تابع اصلی برای آپدیت موقعیت کاروسل و نشانگرها
+         */
+        const updateCarousel = () => {
+          // در حالت RTL، برای رفتن به اسلاید بعدی (که در سمت چپ است)،
+          // باید ریل را به اندازه مثبت به سمت راست حرکت دهیم.
+          const slideWidth = slides[0].getBoundingClientRect().width;
+          track.style.transform = `translateX(${currentIndex * slideWidth}px)`;
+
+          // آپدیت نشانگرهای فعال
+          updateIndicators();
+        };
+
+        /**
+         * ساخت داینامیک نشانگرها بر اساس تعداد اسلایدها
+         */
+        const createIndicators = () => {
+          slides.forEach((_, index) => {
+            const indicator = document.createElement('button');
+            indicator.classList.add('w-3', 'h-3', 'rounded-full', 'bg-white/50', 'transition-all', 'duration-300', 'hover:bg-white/75');
+            if (index === 0) {
+              indicator.classList.remove('bg-white/50');
+              indicator.classList.add('bg-white');
+            }
+            indicator.addEventListener('click', () => {
+              goToSlide(index); // استفاده از تابع عمومی‌تر
+            });
+            indicatorsContainer.appendChild(indicator);
+          });
+        };
+
+        /**
+         * آپدیت کلاس نشانگر فعال
+         */
+        const updateIndicators = () => {
+          const indicators = Array.from(indicatorsContainer.children);
+          indicators.forEach((indicator, index) => {
+            if (index === currentIndex) {
+              indicator.classList.remove('bg-white/50');
+              indicator.classList.add('bg-white');
+            } else {
+              indicator.classList.remove('bg-white');
+              indicator.classList.add('bg-white/50');
+            }
+          });
+        };
+
+        /**
+         * رفتن به اسلاید مشخص
+         */
+        const goToSlide = (index) => {
+          currentIndex = index;
+          updateCarousel();
+          resetAutoplay(); // ریست کردن تایمر پس از کلیک
+        };
+
+        /**
+         * رفتن به اسلاید بعدی
+         */
+        const goToNextSlide = () => {
+          // اگر به آخر رسید، برگرد به اول
+          if (currentIndex === slides.length - 1) {
+            currentIndex = 0;
+          } else {
+            currentIndex++;
+          }
+          updateCarousel();
+        };
+
+        /**
+         * رفتن به اسلاید قبلی
+         */
+        const goToPrevSlide = () => {
+          // اگر به اول رسید، برو به آخر
+          if (currentIndex === 0) {
+            currentIndex = slides.length - 1;
+          } else {
+            currentIndex--;
+          }
+          updateCarousel();
+        };
+
+        // === ۴. توابع مربوط به لوپ خودکار (Autoplay) ===
+
+        const startAutoplay = () => {
+          // توقف تایمر قبلی در صورت وجود
+          stopAutoplay();
+          autoplayInterval = setInterval(goToNextSlide, 4000); // هر ۴ ثانیه
+        };
+
+        const stopAutoplay = () => {
+          if (autoplayInterval) {
+            clearInterval(autoplayInterval);
+          }
+        };
+
+        const resetAutoplay = () => {
+          stopAutoplay();
+          startAutoplay();
+        }
+
+
+        // === ۵. رویدادها (Event Listeners) ===
+
+        // رویداد کلیک برای دکمه‌ها
+        nextButton.addEventListener('click', () => {
+          goToNextSlide();
+          resetAutoplay(); // ریست کردن تایمر پس از کلیک
+        });
+        prevButton.addEventListener('click', () => {
+          goToPrevSlide();
+          resetAutoplay(); // ریست کردن تایمر پس از کلیک
+        });
+
+        // === منطق سوایپ (Swipe) برای موبایل (برای RTL) ===
+
+        track.addEventListener('touchstart', (e) => {
+          isDragging = true;
+          startX = e.touches[0].clientX;
+          stopAutoplay(); // توقف لوپ هنگام شروع لمس
+        });
+
+        track.addEventListener('touchend', (e) => {
+          if (!isDragging) return;
+
+          const endX = e.changedTouches[0].clientX;
+          const diffX = startX - endX;
+
+          if (Math.abs(diffX) > 50) {
+            // در RTL، منطق برعکس می‌شود:
+            // سوایپ به چپ (diffX > 0) یعنی رفتن به اسلاید قبلی
+            if (diffX > 0) {
+              goToPrevSlide();
+            } else {
+              // سوایپ به راست (diffX < 0) یعنی رفتن به اسلاید بعدی
+              goToNextSlide();
+            }
+          }
+
+          isDragging = false;
+          startAutoplay(); // شروع مجدد لوپ پس از پایان لمس
+        });
+
+        // جلوگیری از حرکت پیش‌فرض مرورگر هنگام لمس و حرکت
+        track.addEventListener('touchmove', (e) => {
+          if (!isDragging) return;
+          e.preventDefault();
+        }, { passive: false });
+
+        // رویدادهای ماوس برای دسکتاپ
+        carouselContainer.addEventListener('mouseenter', stopAutoplay);
+        carouselContainer.addEventListener('mouseleave', startAutoplay);
+
+
+        // === ۶. مقداردهی اولیه ===
+        createIndicators();
+        updateCarousel();
+        startAutoplay(); // شروع حرکت خودکار
+
+      });
+    </script>
+
+
+
+
+
+    <div class="grid grid-cols-4 md:grid-cols-4 gap-3 mt-4">
+      <!-- سلامت و پزشکی -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-heartbeat text-red-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">سلامت و پزشکی</span>
+      </div>
+
+      <!-- شنا -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-swimmer text-blue-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">شنا</span>
+      </div>
+
+      <!-- غذا -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-hamburger text-yellow-600 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">غذا</span>
+      </div>
+
+      <!-- سرگرمی -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-gamepad text-purple-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">سرگرمی</span>
+      </div>
+
+      <!-- آرایشی -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-spray-can text-pink-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">آرایشی</span>
+      </div>
+
+      <!-- تخفیف‌ها -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-ticket-alt text-indigo-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">تخفیف‌ها</span>
+      </div>
+
+      <!-- سبد خرید -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-shopping-basket text-purple-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">سبد خرید</span>
+      </div>
+
+      <!-- خرید آنلاین -->
+      <div
+        class="category-card bg-white rounded-xl px-1 py-4 flex flex-col items-center justify-center cursor-pointer hover:shadow-lg">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-3">
+          <i class="fas fa-mobile-alt text-green-500 text-2xl"></i>
+        </div>
+        <span class="text-gray-500 text-xs text-center">خرید آنلاین</span>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Grid Card Component -->
+    <section class="mt-4 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div id="openSheetBtn"
+        class="bg-white rounded-2xl shadow-sm hover:shadow-md transition px-1 pt-1 pb-4 flex flex-col items-center text-center">
+        <img
+          src="https://cdn.takhfifan.com/images/1.0?id=vendor/production/business/images/104168/gnzab-94xdXbcSiJMDRCOw.jpg"
+          alt="product" class="rounded-xl mb-3 object-fill w-full h-40" />
+        <h3 class="font-semibold text-gray-800">عنوان کارت</h3>
+        <p class="text-gray-500 text-sm mt-1">
+          توضیحات کوتاه محصول
+        </p>
+      </div>
+      <div
+        class="bg-white rounded-2xl shadow-sm hover:shadow-md transition px-1 pt-1 pb-4 flex flex-col items-center text-center">
+        <img
+          src="https://cdn.takhfifan.com/images/1.0?id=vendor/production/business/images/112583/KLyvTMBA-5E8WErjkwyB7A.jpg"
+          alt="product" class="rounded-xl mb-3 object-fill w-full h-40" />
+        <h3 class="font-semibold text-gray-800">نمونه کارت دوم</h3>
+        <p class="text-gray-500 text-sm mt-1">
+          ظاهر مینیمال و لایت
+        </p>
+      </div>
+    </section>
+
+
+
+
+
+    <!-- List Card Component -->
+    <section class="mt-4 space-y-3">
+      <div class="flex items-center gap-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition p-3">
+        <img
+          src="https://cdn.takhfifan.com/images/1.0?id=vendor/production/business/images/109175/0WCtecCfPVTvA6dETPaLBA.jpg"
+          alt="image" class="w-20 h-20 rounded-xl object-fill" />
+        <div class="ml-4 flex-1">
+          <h3 class="font-semibold text-gray-800">عنوان کارت لیستی</h3>
+          <p class="text-gray-500 text-sm mt-1">
+            توضیحات مختصر برای معرفی آیتم لیست
+          </p>
+        </div>
+        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition">
+          مشاهده
+        </button>
+      </div>
+      <div class="flex items-center gap-4 bg-white rounded-2xl shadow-sm hover:shadow-md transition p-3">
+        <img
+          src="https://cdn.takhfifan.com/images/1.0?id=vendor/production/business/images/100677/jLqCsgmpnniJgJECcihneQ.jpg"
+          alt="image" class="w-20 h-20 rounded-xl object-fill" />
+        <div class="ml-4 flex-1">
+          <h3 class="font-semibold text-gray-800">کارت دوم</h3>
+          <p class="text-gray-500 text-sm mt-1">سبک مدرن و مینیمال</p>
+        </div>
+        <button class="text-blue-600 hover:text-blue-800 text-sm font-medium transition">
+          باز کردن
+        </button>
+      </div>
+    </section>
+
+
+
+
+    <!-- 📱 Bottom Sheet Component -->
+    <div class="fixed inset-0 z-50 hidden" id="bottomSheetOverlay">
+      <!-- پس‌زمینه تار -->
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="bottomSheetBackdrop"></div>
+
+      <!-- پنل پایین -->
+      <div id="bottomSheet"
+        class="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg transform translate-y-full transition-transform duration-300 ease-out">
+        <!-- نوار بالای شیت -->
+        <div class="p-4 border-b text-center font-semibold">
+          منوی پایین صفحه
+        </div>
+
+        <!-- محتوای شیت -->
+        <div class="p-4 max-h-[60vh] overflow-y-auto">
+          <p class="text-gray-600 mb-3 leading-relaxed">
+            این بخش می‌تواند شامل هر نوع محتوایی باشد:
+            لیست گزینه‌ها، دکمه‌ها، فرم‌ها یا حتی تصاویر.
+          </p>
+
+          <ul class="space-y-2">
+            <li class="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+              گزینه ۱
+            </li>
+            <li class="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+              گزینه ۲
+            </li>
+            <li class="p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition">
+              گزینه ۳
+            </li>
+          </ul>
+
+          <button id="closeSheetBtn" class="w-full py-2 mt-6 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+            بستن
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- 📱 Bottom Sheet Component -->
+    <script>
+      const openBtn = document.getElementById("openSheetBtn");
+      const closeBtn = document.getElementById("closeSheetBtn");
+      const overlay = document.getElementById("bottomSheetOverlay");
+      const sheet = document.getElementById("bottomSheet");
+      const backdrop = document.getElementById("bottomSheetBackdrop");
+
+      function openSheet() {
+        overlay.classList.remove("hidden");
+        requestAnimationFrame(() => {
+          sheet.classList.remove("translate-y-full");
+        });
+      }
+
+      function closeSheet() {
+        sheet.classList.add("translate-y-full");
+        setTimeout(() => {
+          overlay.classList.add("hidden");
+        }, 300);
+      }
+
+      openBtn.addEventListener("click", openSheet);
+      closeBtn.addEventListener("click", closeSheet);
+      backdrop.addEventListener("click", closeSheet);
+    </script>
+
+
+
+  </div>
+
+
+
+
+  <!-- Bottom Navigation Bar Component -->
+  <nav class="fixed bottom-0 left-0 w-full bg-white shadow-t-md rounded-t-2xl flex justify-around items-center py-4">
+
+    <!-- خانه -->
+    <button class="flex flex-col items-center text-gray-400 hover:text-red-500 focus:text-red-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span class="text-xs">خانه</span>
+    </button>
+
+    <!-- جستجو -->
+    <button class="flex flex-col items-center text-gray-400 hover:text-red-500 focus:text-red-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <span class="text-xs">جستجو</span>
+    </button>
+
+    <!-- دسته بندی -->
+    <button class="flex flex-col items-center text-gray-400 hover:text-red-500 focus:text-red-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" width="24" height="24" viewBox="0 0 24 24"
+        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      </svg>
+      <span class="text-xs">دسته بندی</span>
+    </button>
+
+    <!-- اعلان‌ها -->
+    <button class="flex flex-col items-center text-gray-400 hover:text-red-500 focus:text-red-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+      <span class="text-xs">اعلان</span>
+    </button>
+
+    <!-- پروفایل -->
+    <button class="flex flex-col items-center text-gray-400 hover:text-red-500 focus:text-red-500">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mb-1" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M5.121 17.804A9 9 0 1118.879 6.196 9 9 0 015.12 17.804z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      <span class="text-xs">پروفایل</span>
+    </button>
+
+  </nav>
+
+
+
+
+  <!-- popup Component -->
+  <div id="overlay_popup"
+    class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden flex items-center justify-center z-[999] opacity-0 transition-opacity duration-300">
+
+    <div id="box_popup"
+      class="bg-white rounded-2xl shadow-xl p-6 w-80 text-center transform scale-95 transition-all duration-300 opacity-0">
+      <h2 class="text-lg font-semibold text-gray-800 mb-2">پاپ‌آپ مدرن</h2>
+      <p class="text-gray-500 text-sm mb-6 leading-relaxed">
+        این یک پاپ‌آپ مینیمال و نرم است که در مرکز صفحه با افکت فید باز می‌شود.
+      </p>
+
+      <div class="flex justify-center gap-3">
+        <button id="close_popup" class="px-4 py-2 text-gray-600 hover:text-red-500 transition">بستن</button>
+        <button class="px-5 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition">تأیید</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const open_popup = document.getElementById('open_popup');
+    const close_popup = document.getElementById('close_popup');
+    const overlay_popup = document.getElementById('overlay_popup');
+    const box_popup = document.getElementById('box_popup');
+
+    open_popup.addEventListener('click', () => {
+      overlay_popup.classList.remove('hidden');
+      setTimeout(() => {
+        overlay_popup.classList.add('opacity-100');
+        box_popup.classList.add('opacity-100', 'scale-100');
+      }, 10);
+    });
+
+    const closePopup = () => {
+      overlay_popup.classList.remove('opacity-100');
+      box_popup.classList.remove('opacity-100', 'scale-100');
+      setTimeout(() => overlay_popup.classList.add('hidden'), 300);
+    };
+
+    close_popup.addEventListener('click', closePopup);
+    overlay_popup.addEventListener('click', (e) => {
+      if (e.target === overlay_popup) closePopup();
+    });
+  </script>
+
+
+</body>
+
+</html>
